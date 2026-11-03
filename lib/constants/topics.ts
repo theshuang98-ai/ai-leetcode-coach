@@ -1,0 +1,23 @@
+/** Maps LeetCode topic slugs to Chinese display names */
+export const TOPIC_NAMES: Record<string, string> = {
+  arrays: '数组',
+  'dynamic-programming': '动态规划',
+  'binary-search': '二分查找',
+  'sliding-window': '滑动窗口',
+  graph: '图论',
+  tree: '树',
+  greedy: '贪心',
+  backtracking: '回溯',
+  stack: '栈',
+  queue: '队列',
+  'linked-list': '链表',
+  'hash-table': '哈希表',
+  string: '字符串',
+  math: '数学',
+  sorting: '排序',
+  'two-pointers': '双指针',
+  recursion: '递归',
+  'bit-manipulation': '位运算',
+  design: '设计',
+  simulation: '模拟',
+};

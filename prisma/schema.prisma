@@ -1,0 +1,169 @@
+// ── Database Schema for AI LeetCode Coach ──────────────────────────
+// PostgreSQL provider with Prisma ORM
+// Models: User, Problem, UserProblem, Plan, PlanProblem, Subscription, DailyPush
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ──────────────────────────────────────────────────────────
+
+enum SubscriptionStatus {
+  free
+  trial
+  active
+  canceled
+}
+
+enum ProblemDifficulty {
+  Easy
+  Medium
+  Hard
+}
+
+enum UserProblemStatus {
+  unsolved
+  solved
+  skipped
+}
+
+enum SubscriptionPlanStatus {
+  active
+  canceled
+  past_due
+}
+
+// ── Models ─────────────────────────────────────────────────────────
+
+model User {
+  id                String             @id @default(uuid())
+  wechatOpenId      String             @unique
+  wechatNickname    String?
+  planId            Int?
+  dailyQuota        Int                @default(5)
+  subscriptionStatus SubscriptionStatus @default(free)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  plan             Plan?              @relation(fields: [planId], references: [id])
+  userProblems     UserProblem[]
+  subscriptions    Subscription[]
+  dailyPushes      DailyPush[]
+  apiKeys          ApiKey[]
+
+  @@map("users")
+}
+
+model Problem {
+  id              Int                @id @default(autoincrement())
+  leetcodeId      Int                @unique
+  title           String
+  titleCn         String?
+  slug            String             @unique
+  difficulty      ProblemDifficulty
+  difficultyScore Int
+  contestRating   Float?
+  topic           String
+
+  userProblems    UserProblem[]
+  planProblems    PlanProblem[]
+
+  @@map("problems")
+}
+
+model UserProblem {
+  userId         String
+  problemId      Int
+  status         UserProblemStatus  @default(unsolved)
+  mastery        Int?
+  nextReviewAt   DateTime?
+  reviewCount    Int                @default(0)
+  lastReviewedAt DateTime?
+
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem        Problem            @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, problemId])
+  @@index([userId, problemId])
+  @@map("user_problems")
+}
+
+model Plan {
+  id             Int            @id @default(autoincrement())
+  name           String
+  totalProblems  Int
+  description    String
+
+  users          User[]
+  planProblems   PlanProblem[]
+
+  @@map("plans")
+}
+
+model PlanProblem {
+  planId    Int
+  problemId Int
+  order     Int
+
+  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  problem   Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, problemId])
+  @@map("plan_problems")
+}
+
+model Subscription {
+  id                   String                 @id @default(uuid())
+  userId               String                 @unique
+  stripeCustomerId     String                 @unique
+  stripeSubscriptionId String                 @unique
+  status               SubscriptionPlanStatus
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  trialEndsAt          DateTime?
+  createdAt            DateTime               @default(now())
+
+  user                 User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([stripeCustomerId])
+  @@map("subscriptions")
+}
+
+model DailyPush {
+  id           String   @id @default(uuid())
+  userId       String
+  date         DateTime @db.Date
+  problemIds   Int[]
+  completedIds Int[]
+  ratedIds     Int[]
+  isComplete   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@map("daily_pushes")
+}
+
+// ── API Key Auth (T6: Chrome Extension auth) ─────────────────
+
+model ApiKey {
+  id         String    @id @default(uuid())
+  keyPrefix  String    // first 8 chars for identification
+  keyHash    String    @unique // SHA-256 hash
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String?   // optional label
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("api_keys")
+}

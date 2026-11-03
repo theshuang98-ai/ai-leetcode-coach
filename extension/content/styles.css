@@ -1,0 +1,363 @@
+/* AI LeetCode 私教 — Rating Popup Styles */
+/* All styles are injected into Shadow DOM for CSS isolation */
+
+:host {
+  all: initial;
+}
+
+.rating-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  animation: ratingFadeIn 0.3s ease-out;
+}
+
+@keyframes ratingFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.rating-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 20px 24px;
+  min-width: 280px;
+}
+
+.rating-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.rating-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.rating-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 80px;
+  padding: 14px 12px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.rating-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.rating-btn:active {
+  transform: translateY(0);
+}
+
+.rating-btn .emoji {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.rating-btn .label {
+  font-size: 12px;
+}
+
+/* Mastery 1: Proficient (熟练) - Green */
+.rating-btn.mastery-1 {
+  background: #ecfdf5;
+  border-color: #10b981;
+  color: #065f46;
+}
+.rating-btn.mastery-1:hover {
+  background: #d1fae5;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Mastery 2: Needed Hints (需提示) - Amber */
+.rating-btn.mastery-2 {
+  background: #fffbeb;
+  border-color: #f59e0b;
+  color: #92400e;
+}
+.rating-btn.mastery-2:hover {
+  background: #fef3c7;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* Mastery 3: Forgot (忘了) - Red */
+.rating-btn.mastery-3 {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+.rating-btn.mastery-3:hover {
+  background: #fee2e2;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Dismiss animation */
+.rating-container.dismiss {
+  animation: ratingFadeOut 0.25s ease-in forwards;
+}
+
+@keyframes ratingFadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+}
+
+/* ==========================================================================
+   Task Sidebar — Left-side floating overlay
+   ========================================================================== */
+
+/* Toggle tab — always visible on left edge */
+.tl-toggle {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 99996;
+  width: 36px;
+  height: 72px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 0 10px 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 14px;
+  user-select: none;
+  box-shadow: 2px 0 14px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s ease, left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+.tl-toggle:hover {
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 2px 0 18px rgba(59, 130, 246, 0.35);
+}
+
+.tl-toggle:active {
+  transform: translateY(-50%) scale(0.97);
+}
+
+/* Sidebar panel */
+.tl-panel {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 280px;
+  height: 100vh;
+  z-index: 99995;
+  background: #ffffff;
+  box-shadow: 4px 0 28px rgba(0, 0, 0, 0.13), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  transform: translateX(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tl-panel--hidden {
+  transform: translateX(-100%);
+  box-shadow: none;
+}
+
+/* Header */
+.tl-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 14px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  flex-shrink: 0;
+  background: #fafbfc;
+}
+
+.tl-header-title {
+  font-size: 15px;
+  font-weight: 650;
+  color: #1f2937;
+  letter-spacing: 0.01em;
+}
+
+.tl-close-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  padding: 0;
+  line-height: 1;
+}
+
+.tl-close-btn:hover {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+/* Progress bar */
+.tl-progress-bar {
+  height: 3px;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+
+.tl-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  transition: width 0.4s ease;
+  border-radius: 0 1.5px 1.5px 0;
+}
+
+/* Task list container */
+.tl-task-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 6px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Thin scrollbar for task list */
+.tl-task-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.tl-task-list::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 2px;
+}
+
+.tl-task-list::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Individual task row */
+.tl-task {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 20px;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+  border-left: 3px solid transparent;
+  user-select: none;
+}
+
+.tl-task:hover {
+  background: #f9fafb;
+}
+
+/* Completed task */
+.tl-task--completed {
+  background: #f0fdf4;
+  border-left-color: #22c55e;
+}
+
+.tl-task--completed:hover {
+  background: #dcfce7;
+}
+
+.tl-task--completed .tl-task-title {
+  color: #16a34a;
+  text-decoration: line-through;
+  text-decoration-color: #86efac;
+}
+
+/* Current (matching page URL) task */
+.tl-task--current {
+  background: #eff6ff;
+  border-left-color: #3b82f6;
+}
+
+.tl-task--current:hover {
+  background: #dbeafe;
+}
+
+.tl-task--current .tl-task-title {
+  color: #2563eb;
+  font-weight: 650;
+}
+
+/* Task icon */
+.tl-task-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+  width: 22px;
+  text-align: center;
+  line-height: 1;
+}
+
+/* Task title text */
+.tl-task-title {
+  font-size: 13px;
+  color: #374151;
+  line-height: 1.45;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Empty state */
+.tl-sidebar-empty {
+  padding: 48px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.tl-empty-icon {
+  font-size: 36px;
+  opacity: 0.6;
+}
+
+.tl-empty-text {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.tl-empty-hint {
+  font-size: 12px;
+  color: #9ca3af;
+  line-height: 1.6;
+}
